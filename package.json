@@ -21,8 +21,10 @@
     "@angular/platform-browser": "^15.1.0",
     "@angular/platform-browser-dynamic": "^15.1.0",
     "@angular/router": "^15.1.0",
+    "@types/topojson-client": "^3.1.1",
     "d3": "^7.8.4",
     "rxjs": "~7.8.0",
+    "topojson-client": "^3.1.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
   },
