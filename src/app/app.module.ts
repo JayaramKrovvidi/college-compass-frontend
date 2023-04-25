@@ -6,11 +6,13 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './app.material.module';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { CollegeDashboardComponent } from './components/college-dashboard/college-dashboard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    CollegeDashboardComponent
   ],
   imports: [
     BrowserModule,
