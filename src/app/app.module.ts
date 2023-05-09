@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './app.material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { HttpClientModule } from '@angular/common/http';
 
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { CollegeDashboardComponent } from './components/college-dashboard/college-dashboard.component';
@@ -33,7 +34,8 @@ import { StackedBarChartComponent } from './components/stacked-bar-chart/stacked
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
