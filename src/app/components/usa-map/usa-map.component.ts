@@ -1,165 +1,119 @@
+// @ts-nocheck
+
 import { Component, ElementRef, OnInit } from '@angular/core';
 import * as d3 from 'd3';
+import { BackendService, LocationDataPoint } from 'src/app/services/compass-backend-service';
 import * as topojson from 'topojson-client';
-import { GeometryCollection } from 'topojson-specification';
-
-interface College {
-  name: string;
-  latitude: number;
-  longitude: number;
-  enrolled_students: number;
-}
 
 @Component({
   selector: 'usa-map',
   templateUrl: './usa-map.component.html',
-  styleUrls: ['./usa-map.component.scss']
+  styleUrls: ['./usa-map.component.scss'],
+  providers: [BackendService]
 })
 export class UsaMapComponent implements OnInit {
 
-  svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
-  projection: d3.GeoIdentityTransform;
-  collegeProjection: d3.GeoIdentityTransform;
-  states: any; nation: any; colleges: GeoJSON.FeatureCollection<GeoJSON.Point, College>;
-  path: d3.GeoPath<any, d3.GeoPermissibleObjects>;
+  svg: any;
+  backend: BackendService
+  col: LocationDataPoint[]
 
-  constructor(private el: ElementRef) { }
+  constructor(private el: ElementRef, backend: BackendService) {
+    this.backend = backend;
+  }
 
   ngOnInit(): void {
-    d3.json('https://d3js.org/us-10m.v1.json').then((topology: any) => {
-      this.states = topojson.feature(topology, topology.objects.states as GeometryCollection);
-      this.nation = topojson.feature(topology, topology.objects.nation)
-      this.drawMap();
-    });
-    d3.select(window).on('resize', this.resizeMap);
+    this.draw()
   }
 
-  private drawMap() {
+  draw() {
+    d3.select(`#map`).html("");
     const { width, height } = this.getMapContainerWidthAndHeight();
-    this.projection = d3.geoIdentity().fitSize([width, height], this.states);
-    this.path = d3.geoPath(this.projection)
-
     this.svg = d3.select('#map')
       .append('svg')
-      .attr('width', width + 50)
-      .attr('height', height);
+      .attr('width', width)
+      .attr('height', height)
+      .append("g")
+      // .style('pointer-events', 'auto !important')
+      .style('background-color', '#D6D3E3')
 
-    this.renderNationFeatures();
-    this.renderStateFeatures();
-    this.plotColleges(width, height);
-  }
+    const projection = d3.geoAlbersUsa().scale(width).translate([width / 2, height / 2.2]);
+    const path = d3.geoPath().projection(projection);
 
-  renderNationFeatures(): void {
-    this.svg.select('defs')
-      .append('path')
-      .datum(this.nation)
-      .attr('id', 'nation')
-      .attr('d', this.path);
-
-    this.svg.append('use')
-      .attr('xlink:href', '#nation')
-      .attr('fill-opacity', 0.2)
-      .attr('filter', 'url(#blur)');
-
-    this.svg.append('use')
-      .attr('xlink:href', '#nation')
-      .attr('fill', '#fff');
-  }
-
-  renderStateFeatures(): void {
-    this.svg.append('g')
-      .attr('class', 'state')
-      .attr('fill', 'none')
-      .attr('stroke', '#BDBDBD')
-      .attr('stroke-width', '0.7')
-      .selectAll('path.state')
-      .data(this.states["features"])
-      .join('path')
-      .attr('id', (d: any) => d.id)
-      .attr('d', this.path as any);
-  }
-
-  plotColleges(width: number, height: number) {
-    const col: College[] = this.generateRandomColleges();
-
-    this.colleges = {
-      type: "FeatureCollection",
-      features: [],
-    };
-
-    // convert each college data point into a GeoJSON feature
-    col.forEach((college) => {
-      const feature: GeoJSON.Feature<GeoJSON.Point, College> = {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [college.longitude, college.latitude],
-        },
-        properties: college,
-      };
-      this.colleges.features.push(feature);
-    });
-
-    const radiusScale = d3.scaleLinear()
-      .domain([d3.min(col, d => d.enrolled_students), d3.max(col, d => d.enrolled_students)] as number[])
-      .range([3, 10]);
-
-    this.collegeProjection = d3.geoIdentity()
-      .fitSize([width, height], this.colleges);
-
-    const _this = this
-    const collegeCircles = this.svg.selectAll(".college")
-      .data(this.colleges.features)
-      .enter().append("circle")
-      .attr("class", "college")
-      .attr("cx", (d: any) => _this.getCollegeCoordinates(d)[0])
-      .attr("cy", (d: any) => _this.getCollegeCoordinates(d)[1])
-      .attr("r", (d: any) => radiusScale(d.properties.enrolled_students))
-      .style("fill", "blue")
-      .style("opacity", 0.1);
-  }
-
-  generateRandomColleges() {
-    const colleges: College[] = []
-
-    for (let i = 0; i < 1000; i++) {
-      let college: College = {
-        name: 'College ' + i,
-        latitude: Math.random() * (72 - 13) + 13,
-        longitude: Math.random() * (146 + 177) - 177,
-
-        enrolled_students: Math.floor(Math.random() * 10000)
-      };
-
-      colleges.push(college);
-    }
-    return colleges
+    this.renderMap(path, projection);
+    this.addBrushing(width, height, projection);
   }
 
   getMapContainerWidthAndHeight = (): { width: number; height: number } => {
     const mapContainerEl = this.el.nativeElement.querySelector('#map') as HTMLDivElement;
-    const width = mapContainerEl.clientWidth - 50;
+    const width = mapContainerEl.clientWidth;
     const height = (width / 960) * 600;
     return { width, height };
   };
 
-  resizeMap = () => {
-    const { width, height } = this.getMapContainerWidthAndHeight();
-    this.svg.attr('width', width + 50).attr('height', height);
 
-    // update projection
-    this.projection.fitSize([width, height], this.states);
-    this.collegeProjection.fitSize([width, height], this.colleges);
+  private renderMap(path: d3.GeoPath<any, d3.GeoPermissibleObjects>, projection: any) {
+    d3.json('https://unpkg.com/us-atlas@3.0.0/states-10m.json').then((usa: any) => {
 
-    // resize the map
-    this.svg.selectAll('path').attr('d', this.path as any);
-    this.svg.selectAll('circle')
-      .attr("cx", (d: any) => this.getCollegeCoordinates(d)[0])
-      .attr("cy", (d: any) => this.getCollegeCoordinates(d)[1])
-  };
+      this.svg.selectAll('path')
+        .data(topojson.feature(usa, usa.objects.nation).features)
+        .enter().append("path")
+        .attr("d", path)
+        .style('fill', '#d9d9d9')
+        .style('stroke', '#FFF')
+        .style('stroke-width', '0.7')
 
-  getCollegeCoordinates(d: any) {
-    return [this.collegeProjection(d.geometry.coordinates as [number, number])?.[0] || 0,
-    this.collegeProjection(d.geometry.coordinates as [number, number])?.[1] || 0]
+      this.svg.append("path")
+        .datum(topojson.mesh(usa, usa.objects.states, function (a, b) { return a !== b; }))
+        .attr("class", "mesh")
+        .attr("d", path)
+        .style('fill', '#d9d9d9')
+        .style('stroke', '#FFF')
+        .style('stroke-width', '0.7')
+
+      this.backend.getMapData().subscribe(data => {
+        this.col = data.colleges;
+
+        const radiusScale = d3.scaleLinear()
+          .domain([d3.min(this.col, d => d.population), d3.max(this.col, d => d.population)] as number[])
+          .range([4, 12]);
+
+        this.svg.selectAll('circle')
+          .data(this.col)
+          .enter()
+          .append('circle')
+          .attr('cx', (d) => projection([d.longitude, d.latitude]) ? projection([d.longitude, d.latitude])![0] : 0)
+          .attr('cy', (d) => projection([d.longitude, d.latitude]) ? projection([d.longitude, d.latitude])![1] : 0)
+          .attr('r', (d) => projection([d.longitude, d.latitude]) && d.population ? 2 * radiusScale(d.population) : 0)
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .ease(d3.easeElasticOut)
+          .style('fill', '#8365a3')
+          .style("opacity", 0.2)
+          .attr('r', (d: any) => projection([d.longitude, d.latitude]) && d.population ? radiusScale(d.population) : 0)
+          .append('title')
+          .text((d) => `${d.name}, Population: ${d.population}`)
+      })
+    });
   }
+
+  addBrushing(width, height, projection) {
+    const _this = this
+    const brush = d3.brush()
+      .extent([[0, 0], [width, height]])
+      .on("end", (event) => {
+        const selection = event.selection
+        if (selection) {
+          const selectedColleges = _this.col.filter(d => {
+            const point = projection([d.longitude, d.latitude]);
+            return point && selection[0][0] <= point[0] && point[0] <= selection[1][0] && selection[0][1] <= point[1] && point[1] <= selection[1][1];
+          });
+          const unitIds = selectedColleges.map(d => d.unit_id);
+          console.log(unitIds)
+        }
+      })
+    this.svg.call(brush);
+
+  }
+
 }
