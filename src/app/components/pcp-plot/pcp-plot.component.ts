@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, EventEmitter, OnInit, ElementRef, Output } from '@angular/core';
 import * as d3 from 'd3';
 import ParCoords from 'parcoord-es';
 import { ViewEncapsulation } from '@angular/core';
@@ -12,6 +12,9 @@ import { BackendService } from 'src/app/services/compass-backend-service';
   encapsulation: ViewEncapsulation.None
 })
 export class PcpPlotComponent implements OnInit {
+
+  @Output()
+  onBrush: EventEmitter<number[]> = new EventEmitter<number[]>();
 
   backend: BackendService
   svg; container;
@@ -42,7 +45,13 @@ export class PcpPlotComponent implements OnInit {
       .reorderable()
       .composite("darker")
       .render()
-      .brushMode("1D-axes");
+      .brushMode("1D-axes")
+      .on("brushend", this.brushed);
+  }
+
+  brushed = (data) => {
+    var unit_ids = data.map(function(d) { return d.unit_id; });
+    this.onBrush.emit(unit_ids);
   }
 
   removeExistingPlot() {

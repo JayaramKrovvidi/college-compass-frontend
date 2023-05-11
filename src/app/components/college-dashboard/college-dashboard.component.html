@@ -3,12 +3,12 @@
         <mat-card fxFlex="50">
             <mat-card-title fxLayoutAlign="center">Size Proportional Map of USA Colleges offering Graduate Courses
                 (2021)</mat-card-title>
-            <usa-map></usa-map>
+            <usa-map [unit_ids]="unit_ids"></usa-map>
         </mat-card>
         <mat-card fxFlex="50">
             <mat-card-title fxLayoutAlign="center">Parallel Coordinates Plot for Average College Statistics
                 (2017-2021)</mat-card-title>
-            <pcp-plot></pcp-plot>
+            <pcp-plot (onBrush)="pcpBrushed($event)"></pcp-plot>
         </mat-card>
     </div>
     <div fxLayout="row">
