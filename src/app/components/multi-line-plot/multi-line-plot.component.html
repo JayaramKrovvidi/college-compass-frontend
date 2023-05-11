@@ -1,7 +1,7 @@
 <div id="multi-line-plot"></div>
-<div class="legend-container" fxLayout="column" fxLayoutAlign="center center">
-    <div fxFlex="100" *ngFor="let item of legendItems" class="legend-item">
-        <span style="display: inline-block; width: 20px; height: 8px;" [style.background-color]="item.color"></span>
-        <span>{{ item.label }}</span>
+<div fxLayout="row wrap" fxLayoutGap="10px" style="background-color: lightgray; border-radius: 10px; margin: 20px; padding: 10px;">
+    <div fxFlex="45" *ngFor="let item of legendItems" fxLayoutAlign="start center" fxLayoutGap="5px">
+        <span style="display: inline-block; width: 20px; height: 20px;" [style.background-color]="item.color"></span>
+        <span style="font-weight: bolder;">{{ item.label }}</span>
     </div>
 </div>
