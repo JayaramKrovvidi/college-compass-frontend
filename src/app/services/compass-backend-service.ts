@@ -50,40 +50,30 @@ export class BackendService {
     this.http = http;
   }
 
-  getMapData() {
-    return this.http.get<MapData>("http://localhost:6969/map_data");
+  prepareUrl(base_url, unit_ids) {
+    if (unit_ids !== undefined && unit_ids !== null && unit_ids.length > 0) {
+      return base_url + '?unit_ids=' + unit_ids.map(id => id.toString()).join(',')
+    } else return base_url;
+  }
+
+  getMapData(unit_ids: number[]) {
+    return this.http.get<MapData>(this.prepareUrl('http://localhost:6969/map_data', unit_ids));
+  }
+
+  getAllUnitIds() {
+    return this.http.get<number[]>('http://localhost:6969/all_unit_ids')
   }
 
   getPCPData(): PCPDataPoint[] {
     return this.generateMockPCPData();
   }
 
-  getStackedBarChartData() {
-    const years = [2017, 2018, 2019, 2020, 2021];
+  getSunBurstData(unit_ids: number[]) {
+    return this.http.get<any>(this.prepareUrl('http://localhost:6969/sunburst', unit_ids))
+  }
 
-    return years.map((year) => {
-      const applicants = {
-        men: Math.floor(Math.random() * 1000),
-        women: Math.floor(Math.random() * 1000),
-      };
-
-      const admissions = {
-        men: Math.floor(Math.random() * 800),
-        women: Math.floor(Math.random() * 800),
-      };
-
-      const enrollments = {
-        men: Math.floor(Math.random() * 600),
-        women: Math.floor(Math.random() * 600),
-      };
-
-      return {
-        year,
-        applicants,
-        admissions,
-        enrollments,
-      };
-    });
+  getStackedBarChartData(unit_ids: number[]) {
+    return this.http.get<BarChartData[]>(this.prepareUrl('http://localhost:6969/bar_chart_data', unit_ids))
   }
 
   generateMockPCPData = (): PCPDataPoint[] => {
@@ -98,7 +88,7 @@ export class BackendService {
     const data: PCPDataPoint[] = [];
 
     for (let i = 0; i < 2000; i++) {
-      const unit_id = i;
+      const unit_id = 100000 + Math.floor(Math.random() * 2000);
       const avg_applicants_total = Math.floor(Math.random() * 10000);
       const avg_admissions_total = Math.floor(Math.random() * 8000);
       const avg_enrolled_total = Math.floor(Math.random() * 6000);

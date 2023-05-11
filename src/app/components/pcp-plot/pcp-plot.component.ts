@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, ElementRef, Output } from '@angular/core';
+import { Component, EventEmitter, SimpleChanges, OnChanges, ElementRef, Input, Output } from '@angular/core';
 import * as d3 from 'd3';
 import ParCoords from 'parcoord-es';
 import { ViewEncapsulation } from '@angular/core';
@@ -11,7 +11,10 @@ import { BackendService } from 'src/app/services/compass-backend-service';
   providers: [BackendService],
   encapsulation: ViewEncapsulation.None
 })
-export class PcpPlotComponent implements OnInit {
+export class PcpPlotComponent implements OnChanges {
+
+  @Input()
+  unit_ids: number[]
 
   @Output()
   onBrush: EventEmitter<number[]> = new EventEmitter<number[]>();
@@ -22,16 +25,19 @@ export class PcpPlotComponent implements OnInit {
     this.backend = backend;
   }
 
-  ngOnInit(): void {
-    this.x();
-    this.container = this.el.nativeElement.querySelector('#pcp') as HTMLDivElement;
-    this.renderPCP();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.unit_ids && this.unit_ids.length > 0) {
+      this.x();
+      this.container = this.el.nativeElement.querySelector('#pcp') as HTMLDivElement;
+      this.renderPCP();
+    }
   }
+  
   renderPCP() {
     this.removeExistingPlot();
     const { width, height } = this.getMapContainerWidthAndHeight();
     this.svg = d3.select(this.container)
-      .attr("style", "width: " + (width + 100) + "px; height: " + height + "px;")
+      .attr("style", "width: " + (width) + "px; height: " + height + "px;")
 
     const colors = this.get_color_generator();
     console.log(this.svg.node())
@@ -50,12 +56,12 @@ export class PcpPlotComponent implements OnInit {
   }
 
   brushed = (data) => {
-    var unit_ids = data.map(function(d) { return d.unit_id; });
+    var unit_ids = data.map(function (d) { return d.unit_id; });
     this.onBrush.emit(unit_ids);
   }
 
   removeExistingPlot() {
-    d3.select(`figure#parcoords`).html("");
+    d3.select(`figure#pcp`).html("");
   }
 
   get_color_generator() {
@@ -66,15 +72,15 @@ export class PcpPlotComponent implements OnInit {
         "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
         "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"])
       .range(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
-      '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
-      '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
-      '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
-      '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']);
+        '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
+        '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
+        '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
+        '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']);
   }
 
   getMapContainerWidthAndHeight = (): { width: number; height: number } => {
     const width = this.container.clientWidth;
-    const height = (width / 960) * 600;
+    const height = this.container.clientHeight;
     return { width, height };
   };
 

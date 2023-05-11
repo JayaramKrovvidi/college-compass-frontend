@@ -10,17 +10,29 @@ import { BackendService } from 'src/app/services/compass-backend-service';
 export class CollegeDashboardComponent implements OnInit {
 
   backend: BackendService
-  unit_ids: number[]
+  map_unit_ids: number[]
+  pcp_unit_ids: number[]
+  stats_unit_ids: number[]
 
   constructor(backend: BackendService) {
     this.backend = backend;
   }
 
   ngOnInit(): void {
-    this.backend.getAllUnitIds().subscribe(data => this.unit_ids = data['unit_ids']);
+    this.backend.getAllUnitIds().subscribe(data => {
+      this.map_unit_ids = data['unit_ids']
+      this.pcp_unit_ids = data['unit_ids']
+      this.stats_unit_ids = data['unit_ids']
+    });
   }
 
   pcpBrushed(unit_ids: number[]) {
-    this.unit_ids = unit_ids;
+    this.map_unit_ids = unit_ids;
+    this.stats_unit_ids = unit_ids;
+  }
+
+  mapBrushed(unit_ids: number[]) {
+    this.pcp_unit_ids = unit_ids
+    this.stats_unit_ids = unit_ids
   }
 }

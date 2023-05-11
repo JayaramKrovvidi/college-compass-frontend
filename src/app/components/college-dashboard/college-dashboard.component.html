@@ -3,12 +3,12 @@
         <mat-card fxFlex="50">
             <mat-card-title fxLayoutAlign="center">Size Proportional Map of USA Colleges offering Graduate Courses
                 (2021)</mat-card-title>
-            <usa-map [unit_ids]="unit_ids"></usa-map>
+            <usa-map [unit_ids]="map_unit_ids" (onBrush)="mapBrushed($event)"></usa-map>
         </mat-card>
         <mat-card fxFlex="50">
             <mat-card-title fxLayoutAlign="center">Parallel Coordinates Plot for Average College Statistics
                 (2017-2021)</mat-card-title>
-            <pcp-plot (onBrush)="pcpBrushed($event)"></pcp-plot>
+            <pcp-plot [unit_ids]="pcp_unit_ids" (onBrush)="pcpBrushed($event)"></pcp-plot>
         </mat-card>
     </div>
     <div fxLayout="row">
@@ -18,7 +18,7 @@
         </mat-card>
         <mat-card fxFlex="33">
             <mat-card-title fxLayoutAlign="center">Overall Ethnicity Split (2017-2021)</mat-card-title>
-            <sunburst-plot></sunburst-plot>
+            <sunburst-plot [unit_ids]="stats_unit_ids"></sunburst-plot>
         </mat-card>
         <mat-card fxFlex="34">
             <mat-card-title fxLayoutAlign="center">Average Admission Statistics (2017 - 2021)</mat-card-title>

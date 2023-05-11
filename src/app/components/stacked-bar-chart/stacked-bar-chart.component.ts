@@ -37,9 +37,11 @@ export class StackedBarChartComponent implements OnInit {
 
     const graph = this.createGraph(width, height, margin, graphWidth, graphHeight);
 
-    const data = this.backend.getStackedBarChartData();
-    const { xScale, yScale, colorScale, highlightColorScale } = this.createAxes(data, graphWidth, graphHeight, graph);
-    this.drawBars(graph, data, xScale, yScale, colorScale, highlightColorScale);
+    this.backend.getStackedBarChartData([]).subscribe(d => {
+      const data = d;
+      const { xScale, yScale, colorScale, highlightColorScale } = this.createAxes(data, graphWidth, graphHeight, graph);
+      this.drawBars(graph, data, xScale, yScale, colorScale, highlightColorScale);
+    })
   }
 
   private createGraph(width: number, height: number, margin: any, graphWidth: number, graphHeight: number) {

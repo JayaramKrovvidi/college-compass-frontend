@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import * as d3 from 'd3';
 import { BackendService, LocationDataPoint } from 'src/app/services/compass-backend-service';
 import * as topojson from 'topojson-client';
@@ -15,6 +15,9 @@ export class UsaMapComponent implements OnChanges {
   @Input('unit_ids')
   unit_ids: number[]
 
+  @Output()
+  onBrush: EventEmitter<number[]> = new EventEmitter<number[]>();
+
   svg: any;
   backend: BackendService
   colleges: LocationDataPoint[]
@@ -26,7 +29,6 @@ export class UsaMapComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.unit_ids)
     if (this.unit_ids && this.unit_ids.length > 0) {
       this.refreshColleges()
       this.draw()
@@ -120,11 +122,10 @@ export class UsaMapComponent implements OnChanges {
             return point && selection[0][0] <= point[0] && point[0] <= selection[1][0] && selection[0][1] <= point[1] && point[1] <= selection[1][1];
           });
           const unitIds = selectedColleges.map(d => d.unit_id);
-          console.log(unitIds)
+          _this.onBrush.emit(unitIds)
         }
       })
     this.svg.call(brush);
-
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnChanges, Input, SimpleChanges } from '@angular/core';
 import * as d2b from 'd2b';
 import * as d3 from 'd3';
 import { BackendService } from 'src/app/services/compass-backend-service';
@@ -9,29 +9,37 @@ import { BackendService } from 'src/app/services/compass-backend-service';
   styleUrls: ['./sunburst-plot.component.scss'],
   providers: [BackendService]
 })
-export class SunburstPlotComponent implements OnInit {
+export class SunburstPlotComponent implements OnChanges {
 
   svg: any;
   backend: BackendService;
+
+  @Input()
+  unit_ids: number[]
 
   constructor(private el: ElementRef, backend: BackendService) {
     this.backend = backend;
   }
 
-  ngOnInit(): void {
-    this.renderSunBurst();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.unit_ids && this.unit_ids.length > 0) {
+      this.renderSunBurst();
+    }
   }
 
   renderSunBurst() {
+    d3.select('.sunburst-chart').select('*').remove()
     var sunburst = d2b.chartSunburst();
     const { width, height } = this.getMapContainerWidthAndHeight();
-    sunburst.chartFrame().size({ width: width, height: height });
-    var chart = d3.select('.sunburst-chart');
-    chart
-      .datum(this.getMockData())
-      .transition()
-      .call(sunburst)
-      .on("interrupt", (data) => console.log(data));
+    this.backend.getSunBurstData(this.unit_ids).subscribe(data => {
+      sunburst.chartFrame().size({ width: width, height: height });
+      var chart = d3.select('.sunburst-chart');
+      chart
+        .datum(data)
+        .transition()
+        .call(sunburst)
+        .on("interrupt", (data) => console.log(data));
+    })
   }
 
   getMapContainerWidthAndHeight = (): { width: number; height: number } => {
