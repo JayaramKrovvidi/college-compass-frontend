@@ -147,40 +147,6 @@ export class StackedBarChartComponent implements OnChanges {
       .append('g')
       .attr('class', 'bar-group')
       .attr('class', 'group-item')
-      .on("mouseover", (event, d) => {
-        event.currentTarget.setAttribute('class', "highlighted-group-item")
-        d3.select(event.currentTarget).style('cursor', 'pointer');
-        d3.select(event.currentTarget).selectAll('rect')
-          .attr('fill', (x, i) => (i % 2 == 0) ? highlightColorScale('men') : highlightColorScale('women'));
-
-        const tooltip = d3.select(event.currentTarget).append('g')
-          .attr('class', 'tooltip')
-
-        tooltip.append('rect')
-          .attr('width', 100)
-          .attr('height', 50)
-          .attr('fill', '#333')
-          .attr('fill-opacity', 0.8);
-
-        tooltip.append('text')
-          .text(`Men: ${d.values.men}`)
-          .attr('x', 10)
-          .attr('y', 20)
-          .attr('fill', '#fff');
-
-        tooltip.append('text')
-          .text(`Women: ${d.values.women}`)
-          .attr('x', 10)
-          .attr('y', 40)
-          .attr('fill', '#fff');
-      })
-      .on("mouseout", (event, d) => {
-        d3.select(event.currentTarget).selectAll('g.tooltip').remove()
-        event.currentTarget.setAttribute('class', "group-item")
-        d3.select(event.currentTarget).style('cursor', 'default');
-        d3.select(event.currentTarget).selectAll('rect')
-          .attr('fill', (d, i) => (i % 2 == 0) ? colorScale('men') : colorScale('women'));
-      })
 
     const rects = bars.selectAll('.rect')
       .data(d => {
@@ -216,5 +182,49 @@ export class StackedBarChartComponent implements OnChanges {
       .attr('height', d => yScale(0) - yScale(d.women))
       .attr('width', barWidth - 5)
       .attr('fill', (d, i) => colorScale('women'));
+
+    bars.on("mouseover", (event, d) => {
+      const idx = d.id
+      event.currentTarget.setAttribute('class', "highlighted-group-item")
+      d3.select(event.currentTarget).style('cursor', 'pointer');
+      d3.select(event.currentTarget).selectAll('rect')
+        .attr('fill', (x, i) => (i % 2 == 0) ? highlightColorScale('men') : highlightColorScale('women'));
+
+      const tooltip = graph.append('g')
+        .attr('class', 'tooltip')
+        .attr('transform', `translate(${Math.floor(idx / 3) * xScale.bandwidth() + ((idx % 3) * barWidth)}, ${0})`)
+
+      tooltip.append('rect')
+        .attr('width', 200)
+        .attr('height', 70)
+        .attr('fill', '#333')
+        .attr('fill-opacity', 0.8);
+
+      const values = ['Applications', 'Admissions', 'Enrollments']
+      tooltip.append('text')
+        .text(`${values[idx % 3]}`)
+        .attr('x', 10)
+        .attr('y', 20)
+        .attr('fill', '#fff');
+
+      tooltip.append('text')
+        .text(`Men: ${d.values.men} (${Math.round(d.values.men / (d.values.men + d.values.women) * 100)}%)`)
+        .attr('x', 10)
+        .attr('y', 40)
+        .attr('fill', '#fff');
+
+      tooltip.append('text')
+        .text(`Women: ${d.values.women} (${Math.round(d.values.women / (d.values.men + d.values.women) * 100)}%)`)
+        .attr('x', 10)
+        .attr('y', 60)
+        .attr('fill', '#fff');
+    })
+      .on("mouseout", (event, d) => {
+        graph.selectAll('g.tooltip').remove()
+        event.currentTarget.setAttribute('class', "group-item")
+        d3.select(event.currentTarget).style('cursor', 'default');
+        d3.select(event.currentTarget).selectAll('rect')
+          .attr('fill', (d, i) => (i % 2 == 0) ? colorScale('men') : colorScale('women'));
+      })
   }
 }
