@@ -65,7 +65,7 @@ export class PcpPlotComponent implements OnInit {
 
   getMapContainerWidthAndHeight = (): { width: number; height: number } => {
     const width = this.container.clientWidth;
-    const height = (width / 960) * 650;
+    const height = (width / 960) * 600;
     return { width, height };
   };
 
