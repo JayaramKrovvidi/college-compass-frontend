@@ -137,7 +137,6 @@ export class StackedBarChartComponent implements OnChanges {
 
     const bars = year_groups.selectAll('.bar-group')
       .data((d, i) => {
-        console.log(d);
         return [
           { key: 'applicants', values: d.applicants, id: (i * 3) + 0 },
           { key: 'admissions', values: d.admissions, id: (i * 3) + 1 },
@@ -185,7 +184,6 @@ export class StackedBarChartComponent implements OnChanges {
 
     const rects = bars.selectAll('.rect')
       .data(d => {
-        console.log(d);
         return [
           { key: d.key, men: d.values.men, women: d.values.women, id: (d.id * 2) },
           { key: d.key, men: d.values.men, women: d.values.women, id: (d.id * 2) + 1 }

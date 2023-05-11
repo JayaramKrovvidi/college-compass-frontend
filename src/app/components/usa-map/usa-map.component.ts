@@ -82,7 +82,7 @@ export class UsaMapComponent implements OnChanges {
 
       const radiusScale = d3.scaleLinear()
         .domain([d3.min(this.colleges, d => d.population), d3.max(this.colleges, d => d.population)] as number[])
-        .range([4, 12]);
+        .range([5, 25]);
 
       this.svg.selectAll('.map-circle')
         .data(this.colleges)

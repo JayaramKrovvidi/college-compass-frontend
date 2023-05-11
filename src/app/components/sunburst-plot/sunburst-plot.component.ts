@@ -37,15 +37,14 @@ export class SunburstPlotComponent implements OnChanges {
       chart
         .datum(data)
         .transition()
-        .call(sunburst)
-        .on("interrupt", (data) => console.log(data));
+        .call(sunburst);
     })
   }
 
   getMapContainerWidthAndHeight = (): { width: number; height: number } => {
     const mapContainerEl = this.el.nativeElement.querySelector('.sunburst-chart') as HTMLDivElement;
     const width = mapContainerEl.clientWidth;
-    const height = (width / 960) * 800;
+    const height = (width / 960) * 600;
     return { width, height };
   };
 
