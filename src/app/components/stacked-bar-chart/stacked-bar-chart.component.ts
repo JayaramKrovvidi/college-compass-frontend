@@ -38,8 +38,8 @@ export class StackedBarChartComponent implements OnInit {
     const graph = this.createGraph(width, height, margin, graphWidth, graphHeight);
 
     const data = this.backend.getStackedBarChartData();
-    const { xScale, yScale, colorScale } = this.createAxes(data, graphWidth, graphHeight, graph);
-    this.drawBars(graph, data, xScale, yScale, colorScale);
+    const { xScale, yScale, colorScale, highlightColorScale } = this.createAxes(data, graphWidth, graphHeight, graph);
+    this.drawBars(graph, data, xScale, yScale, colorScale, highlightColorScale);
   }
 
   private createGraph(width: number, height: number, margin: any, graphWidth: number, graphHeight: number) {
@@ -91,6 +91,10 @@ export class StackedBarChartComponent implements OnInit {
       .domain(['men', 'women'])
       .range(['#98abc5', '#8a89a6']);
 
+    const highlightColorScale = d3.scaleOrdinal()
+      .domain(['men', 'women'])
+      .range(['#ff6600', '#b24700']);
+
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale);
 
@@ -113,44 +117,99 @@ export class StackedBarChartComponent implements OnInit {
       .call(xAxis);
 
     graph.append('g').call(yAxis);
-    return { xScale, yScale, colorScale };
+    return { xScale, yScale, colorScale, highlightColorScale };
   }
 
-  private drawBars(graph: any, data: BarChartData[], xScale: any, yScale: any, colorScale: any) {
-    const groups = graph.selectAll('g.group')
+  private drawBars(graph: any, data: BarChartData[], xScale: any, yScale: any, colorScale: any, highlightColorScale: any) {
+    const year_groups = graph.selectAll('g.group')
       .data(data)
       .enter()
       .append('g')
-      .attr('class', 'group')
+      .attr('class', 'year-group')
       .attr('transform', d => `translate(${xScale(d.year.toString())}, 0)`);
 
-    const rects = groups.selectAll('rect')
-      .data(d => [
-        { key: 'applicants', values: d.applicants },
-        { key: 'admissions', values: d.admissions },
-        { key: 'enrollments', values: d.enrollments },
-      ]);
+    const bars = year_groups.selectAll('.bar-group')
+      .data((d, i) => {
+        console.log(d);
+        return [
+          { key: 'applicants', values: d.applicants, id: (i * 3) + 0 },
+          { key: 'admissions', values: d.admissions, id: (i * 3) + 1 },
+          { key: 'enrollments', values: d.enrollments, id: (i * 3) + 2 },
+        ]
+      })
+      .enter()
+      .append('g')
+      .attr('class', 'bar-group')
+      .attr('class', 'group-item')
+      .on("mouseover", (event, d) => {
+        event.currentTarget.setAttribute('class', "highlighted-group-item")
+        d3.select(event.currentTarget).style('cursor', 'pointer');
+        d3.select(event.currentTarget).selectAll('rect')
+          .attr('fill', (x, i) => (i % 2 == 0) ? highlightColorScale('men') : highlightColorScale('women'));
 
-    rects.enter()
+        const tooltip = d3.select(event.currentTarget).append('g')
+          .attr('class', 'tooltip')
+
+        tooltip.append('rect')
+          .attr('width', 100)
+          .attr('height', 50)
+          .attr('fill', '#333')
+          .attr('fill-opacity', 0.8);
+
+        tooltip.append('text')
+          .text(`Men: ${d.values.men}`)
+          .attr('x', 10)
+          .attr('y', 20)
+          .attr('fill', '#fff');
+
+        tooltip.append('text')
+          .text(`Women: ${d.values.women}`)
+          .attr('x', 10)
+          .attr('y', 40)
+          .attr('fill', '#fff');
+      })
+      .on("mouseout", (event, d) => {
+        d3.select(event.currentTarget).selectAll('g.tooltip').remove()
+        event.currentTarget.setAttribute('class', "group-item")
+        d3.select(event.currentTarget).style('cursor', 'default');
+        d3.select(event.currentTarget).selectAll('rect')
+          .attr('fill', (d, i) => (i % 2 == 0) ? colorScale('men') : colorScale('women'));
+      })
+
+    const rects = bars.selectAll('.rect')
+      .data(d => {
+        console.log(d);
+        return [
+          { key: d.key, men: d.values.men, women: d.values.women, id: (d.id * 2) },
+          { key: d.key, men: d.values.men, women: d.values.women, id: (d.id * 2) + 1 }
+        ]
+      })
+
+    const barWidth = xScale.bandwidth() / 3;
+
+    rects
+      .enter()
+      .filter((d) => d.id % 2 == 0)
       .append('rect')
       .transition()
       .duration(500)
-      .delay((d, i) => i * 50)
-      .attr('x', (d, i) => i * (xScale.bandwidth() / 3))
-      .attr('y', d => yScale(d.values.men))
-      .attr('height', d => yScale(0) - yScale(d.values.men))
-      .attr('width', xScale.bandwidth() / 3 - 5)
+      .delay((d) => (d.id % 3) * 50)
+      .attr('x', (d) => ((d.id / 2) % 3) * barWidth)
+      .attr('y', d => yScale(d.men))
+      .attr('height', d => yScale(0) - yScale(d.men))
+      .attr('width', barWidth - 5)
       .attr('fill', (d, i) => colorScale('men'));
 
     rects.enter()
+      .filter((d) => d.id % 2 == 1)
       .append('rect')
       .transition()
       .duration(500)
-      .delay((d, i) => i * 50)
-      .attr('x', (d, i) => i * (xScale.bandwidth() / 3))
-      .attr('y', d => yScale(d.values.men + d.values.women))
-      .attr('height', d => yScale(0) - yScale(d.values.women))
-      .attr('width', xScale.bandwidth() / 3 - 5)
+      .delay((d) => (d.id % 3) * 50)
+      .attr('x', (d) => (((d.id - 1) / 2) % 3) * barWidth)
+      .attr('y', d => yScale(d.men + d.women))
+      .attr('height', d => yScale(0) - yScale(d.women))
+      .attr('width', barWidth - 5)
       .attr('fill', (d, i) => colorScale('women'));
   }
 }
