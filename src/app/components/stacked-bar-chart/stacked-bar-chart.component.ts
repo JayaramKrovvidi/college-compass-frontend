@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnChanges, Input, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
 import { BackendService, BarChartData } from 'src/app/services/compass-backend-service';
 
@@ -8,7 +8,10 @@ import { BackendService, BarChartData } from 'src/app/services/compass-backend-s
   styleUrls: ['./stacked-bar-chart.component.scss'],
   providers: [BackendService]
 })
-export class StackedBarChartComponent implements OnInit {
+export class StackedBarChartComponent implements OnChanges {
+
+  @Input()
+  unit_ids: number[]
 
   svg: any;
   backend: BackendService;
@@ -17,9 +20,11 @@ export class StackedBarChartComponent implements OnInit {
     this.backend = backend;
   }
 
-
-  ngOnInit(): void {
-    this.drawBarChart()
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.unit_ids && this.unit_ids.length > 0) {
+      d3.select('#stacked-bar').html('')
+      this.drawBarChart();
+    }
   }
 
   getMapContainerWidthAndHeight = (): { width: number; height: number } => {
@@ -37,7 +42,7 @@ export class StackedBarChartComponent implements OnInit {
 
     const graph = this.createGraph(width, height, margin, graphWidth, graphHeight);
 
-    this.backend.getStackedBarChartData([]).subscribe(d => {
+    this.backend.getStackedBarChartData(this.unit_ids).subscribe(d => {
       const data = d;
       const { xScale, yScale, colorScale, highlightColorScale } = this.createAxes(data, graphWidth, graphHeight, graph);
       this.drawBars(graph, data, xScale, yScale, colorScale, highlightColorScale);

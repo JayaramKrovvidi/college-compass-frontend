@@ -14,7 +14,7 @@
     <div fxLayout="row">
         <mat-card fxFlex="33">
             <mat-card-title fxLayoutAlign="center">Average Tuition Pricing (2017-2021)</mat-card-title>
-            <multi-line-plot></multi-line-plot>
+            <multi-line-plot [unit_ids]="stats_unit_ids"></multi-line-plot>
         </mat-card>
         <mat-card fxFlex="33">
             <mat-card-title fxLayoutAlign="center">Overall Ethnicity Split (2017-2021)</mat-card-title>
@@ -22,7 +22,7 @@
         </mat-card>
         <mat-card fxFlex="34">
             <mat-card-title fxLayoutAlign="center">Average Admission Statistics (2017 - 2021)</mat-card-title>
-            <stacked-bar-chart></stacked-bar-chart>
+            <stacked-bar-chart [unit_ids]="stats_unit_ids"></stacked-bar-chart>
         </mat-card>
     </div>
 </div>

@@ -1,28 +1,22 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
-
-interface Tuition {
-  avg_in_dist_on_campus: Point[];
-  avg_in_st_on_campus: Point[];
-  avg_out_st_on_campus: Point[];
-  avg_in_dist_off_campus: Point[];
-  avg_in_st_off_campus: Point[];
-  avg_out_st_off_campus: Point[];
-}
-
-interface Point {
-  year: string;
-  cost: number;
-}
+import { BackendService, Point, Tuition } from 'src/app/services/compass-backend-service';
 
 @Component({
   selector: 'multi-line-plot',
   templateUrl: './multi-line-plot.component.html',
-  styleUrls: ['./multi-line-plot.component.scss']
+  styleUrls: ['./multi-line-plot.component.scss'],
+  providers: [BackendService]
 })
-export class MultiLinePlotComponent implements OnInit {
+export class MultiLinePlotComponent implements OnInit, OnChanges {
 
-  constructor(private el: ElementRef) { }
+  @Input()
+  unit_ids: number[]
+
+  backend: BackendService;
+  constructor(private el: ElementRef, backend: BackendService) {
+    this.backend = backend;
+  }
 
   margin = { top: 5, right: 20, bottom: 40, left: 80 };
   width: number; height: number;
@@ -43,13 +37,19 @@ export class MultiLinePlotComponent implements OnInit {
     { label: '(Out-of-State) Off Campus', color: this.lineColors[5] },
   ];
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.unit_ids && this.unit_ids.length > 0) {
+      d3.select('#multi-line-plot').html('')
+      this.backend.getTuitionData(this.unit_ids).subscribe(data => this.createChart(data));
+    }
+  }
+
   ngOnInit(): void {
     const { width, height } = this.getMapContainerWidthAndHeight()
     this.width = width;
     this.height = height;
     this.graphWidth = width - this.margin.left - this.margin.right;
     this.graphHeight = height - this.margin.top - this.margin.bottom;
-    this.createChart();
   }
 
   generateRandomData(numYears: number): Point[] {
@@ -59,17 +59,7 @@ export class MultiLinePlotComponent implements OnInit {
     }));
   }
 
-  createChart(): void {
-
-    const data: Tuition = {
-      avg_in_dist_on_campus: this.generateRandomData(5),
-      avg_in_st_on_campus: this.generateRandomData(5),
-      avg_out_st_on_campus: this.generateRandomData(5),
-      avg_in_dist_off_campus: this.generateRandomData(5),
-      avg_in_st_off_campus: this.generateRandomData(5),
-      avg_out_st_off_campus: this.generateRandomData(5),
-    };
-
+  createChart(data) {
     this.svg = d3.select('#multi-line-plot').append('svg')
       .attr('width', this.width)
       .attr('height', this.height);

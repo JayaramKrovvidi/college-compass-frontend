@@ -42,6 +42,20 @@ export interface BarChartData {
   };
 }
 
+export interface Tuition {
+  avg_in_dist_on_campus: Point[];
+  avg_in_st_on_campus: Point[];
+  avg_out_st_on_campus: Point[];
+  avg_in_dist_off_campus: Point[];
+  avg_in_st_off_campus: Point[];
+  avg_out_st_off_campus: Point[];
+}
+
+export interface Point {
+  year: string;
+  cost: number;
+}
+
 @Injectable()
 export class BackendService {
 
@@ -74,6 +88,10 @@ export class BackendService {
 
   getStackedBarChartData(unit_ids: number[]) {
     return this.http.get<BarChartData[]>(this.prepareUrl('http://localhost:6969/bar_chart_data', unit_ids))
+  }
+
+  getTuitionData(unit_ids: number[]) {
+    return this.http.get<Tuition>(this.prepareUrl('http://localhost:6969/average_price_data', unit_ids));
   }
 
   generateMockPCPData = (): PCPDataPoint[] => {
