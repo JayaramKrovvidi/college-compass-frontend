@@ -78,8 +78,8 @@ export class BackendService {
     return this.http.get<number[]>('http://localhost:6969/all_unit_ids')
   }
 
-  getPCPData(): PCPDataPoint[] {
-    return this.generateMockPCPData();
+  getPCPData(unit_ids: number[]) {
+    return this.http.get<PCPDataPoint[]>(this.prepareUrl('http://localhost:6969/pcp_data', unit_ids));
   }
 
   getSunBurstData(unit_ids: number[]) {

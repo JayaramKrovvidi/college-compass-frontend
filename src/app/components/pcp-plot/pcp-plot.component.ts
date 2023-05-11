@@ -27,32 +27,36 @@ export class PcpPlotComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.unit_ids && this.unit_ids.length > 0) {
-      this.x();
       this.container = this.el.nativeElement.querySelector('#pcp') as HTMLDivElement;
-      this.renderPCP();
+      this.backend.getPCPData(this.unit_ids).subscribe(data => {
+        this.renderPCP(data);
+      })
     }
   }
-  
-  renderPCP() {
+
+  renderPCP(data) {
     this.removeExistingPlot();
     const { width, height } = this.getMapContainerWidthAndHeight();
     this.svg = d3.select(this.container)
       .attr("style", "width: " + (width) + "px; height: " + height + "px;")
 
     const colors = this.get_color_generator();
-    console.log(this.svg.node())
 
     var pcpPlot = ParCoords()(this.svg.node());
 
-    pcpPlot.data(this.backend.getPCPData())
-      .hideAxis(["unit_id"])
-      .color(function (item) { return colors(item["state"]); })
+    pcpPlot.data(data)
+      .hideAxis(["unit_id", "cluster_num"])
+      .color(function (item) { return colors(item["cluster_num"].toString()); })
       .alpha(0.2)
       .reorderable()
       .composite("darker")
+      .bundleDimension("Admissions")
+      .smoothness(0.2)
       .render()
       .brushMode("1D-axes")
-      .on("brushend", this.brushed);
+      .on("brushend", this.brushed)
+      .createAxes()
+      .updateAxes(750)
   }
 
   brushed = (data) => {
@@ -66,36 +70,14 @@ export class PcpPlotComponent implements OnChanges {
 
   get_color_generator() {
     return d3.scaleOrdinal()
-      .domain(["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-        "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-        "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-        "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-        "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"])
-      .range(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
-        '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
-        '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
-        '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
-        '#17becf', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']);
+      .domain(["0", "1", "2", "3", "4"])
+      .range(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']);
   }
 
   getMapContainerWidthAndHeight = (): { width: number; height: number } => {
     const width = this.container.clientWidth;
-    const height = this.container.clientHeight;
+    const height = (width / 960) * 500;;
     return { width, height };
   };
-
-  x() {
-    const stateAbbrs = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
-    const colorScale = d3.scaleOrdinal()
-      .domain(stateAbbrs)
-      .range(d3.schemeCategory10);
-    const distinctColors = [];
-
-    for (const state of stateAbbrs) {
-      const color = colorScale(state);
-      distinctColors.push(color);
-    }
-    console.log(distinctColors)
-  }
 
 }
