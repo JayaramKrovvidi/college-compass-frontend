@@ -84,7 +84,13 @@ export class UsaMapComponent implements OnChanges {
         .domain([d3.min(this.colleges, d => d.population), d3.max(this.colleges, d => d.population)] as number[])
         .range([5, 25]);
 
-      this.svg.selectAll('.map-circle')
+      this.addBrushing();
+      const tooltip = d3.select("#map")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+      const mapCircles = this.svg.selectAll('.map-circle')
         .data(this.colleges)
         .enter()
         .append('circle')
@@ -92,17 +98,47 @@ export class UsaMapComponent implements OnChanges {
         .attr('cx', (d) => this.projection([d.longitude, d.latitude]) ? this.projection([d.longitude, d.latitude])![0] : 0)
         .attr('cy', (d) => this.projection([d.longitude, d.latitude]) ? this.projection([d.longitude, d.latitude])![1] : 0)
         .attr('r', (d) => this.projection([d.longitude, d.latitude]) && d.population ? 2 * radiusScale(d.population) : 0)
-        .transition()
+        .style('fill', '#8365a3')
+        .style("opacity", 0.2)
+
+      mapCircles.transition()
         .delay(500)
         .duration(1000)
         .ease(d3.easeElasticOut)
-        .style('fill', '#8365a3')
-        .style("opacity", 0.2)
-        .attr('r', (d: any) => this.projection([d.longitude, d.latitude]) && d.population ? radiusScale(d.population) : 0)
-      // .append('title')
-      // .text((d) => `${d.name}, Population: ${d.population}`)
+        .attr('r', (d: any) => this.projection([d.longitude, d.latitude]) && d.population ? radiusScale(d.population) : 0);
 
-      this.addBrushing();
+      mapCircles.on("mouseover", (event, d) => {
+        d3.select(event.currentTarget).style('cursor', 'pointer').style('fill', '#ff6600').style('opacity', 0.5)
+
+        const tooltip = this.svg.append('g')
+          .attr('class', 'tooltip')
+          .attr('transform', `translate(${this.projection([d.longitude, d.latitude])![0] + radiusScale(d.population) - 100}, 
+        ${this.projection([d.longitude, d.latitude])![1] - radiusScale(d.population) - 10})`);
+
+        const text = tooltip.append('text')
+          .text(`${d.name}`)
+          .attr('fill', '#374787')
+          .attr('font-size', '1rem')
+          .attr('font-weight', '600');
+
+        const bbox = text.node()?.getBBox(); 
+
+        tooltip.insert('rect', 'text') 
+          .attr('fill', '#F9F9F9')
+          .attr('stroke', '#374787')
+          .attr('stroke-width', '1px')
+          .attr('rx', '5px') 
+          .attr('ry', '5px')
+          .attr('width', bbox?.width ? bbox.width + 10 : 0) 
+          .attr('height', bbox?.height ? bbox.height + 10 : 0) 
+          .attr('x', bbox?.x ? bbox.x - 5 : 0) 
+          .attr('y', bbox?.y ? bbox.y - 5 : 0);
+
+
+      }).on("mouseout", (event, d) => {
+        this.svg.select('g.tooltip').remove()
+        d3.select(event.currentTarget).style('cursor', 'default').style('fill', '#8365a3').style('opacity', 0.2)
+      })
     })
   }
 
