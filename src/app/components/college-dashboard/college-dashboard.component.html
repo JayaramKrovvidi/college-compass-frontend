@@ -1,24 +1,24 @@
-<div fxFlex="100" fxLayout="column">
+<div fxFlex="100" fxLayout="column" style="background-color: #f2f2f2;">
     <div fxLayout="row">
-        <div fxFlex="50">
+        <mat-card fxFlex="50">
+            <mat-card-title fxLayoutAlign="center">Size Proportional Map of USA Colleges offering Graduate Courses (2021)</mat-card-title>
             <usa-map></usa-map>
-        </div>
-        <div fxFlex="50">
+        </mat-card>
+        <mat-card fxFlex="50">
+            <mat-card-title fxLayoutAlign="center">Parallel Coordinates Plot for Average College Statistics (2017-2021)</mat-card-title>
             <pcp-plot></pcp-plot>
-        </div>
-        <!-- <div fxFlex="34">
-            <pca-bi-plot></pca-bi-plot>
-        </div> -->
+        </mat-card>
     </div>
     <div fxLayout="row">
-        <div fxFlex="33">
+        <mat-card fxFlex="33">
             <multi-line-plot></multi-line-plot>
-        </div>
-        <div fxFlex="33">
+        </mat-card>
+        <mat-card fxFlex="33">
             <sunburst-plot></sunburst-plot>
-        </div>
-        <div fxFlex="34">
+        </mat-card>
+        <mat-card fxFlex="34">
+            <mat-card-title fxLayoutAlign="center">Average Admission Statistics (2017 - 2021)</mat-card-title>
             <stacked-bar-chart></stacked-bar-chart>
-        </div>
+        </mat-card>
     </div>
 </div>
