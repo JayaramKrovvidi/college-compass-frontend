@@ -19,11 +19,7 @@ export class CollegeDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.backend.getAllUnitIds().subscribe(data => {
-      this.map_unit_ids = data['unit_ids']
-      this.pcp_unit_ids = data['unit_ids']
-      this.stats_unit_ids = data['unit_ids']
-    });
+    this.refresh()
   }
 
   pcpBrushed(unit_ids: number[]) {
@@ -34,5 +30,13 @@ export class CollegeDashboardComponent implements OnInit {
   mapBrushed(unit_ids: number[]) {
     this.pcp_unit_ids = unit_ids
     this.stats_unit_ids = unit_ids
+  }
+
+  refresh() {
+    this.backend.getAllUnitIds().subscribe(data => {
+      this.map_unit_ids = data['unit_ids']
+      this.pcp_unit_ids = data['unit_ids']
+      this.stats_unit_ids = data['unit_ids']
+    });
   }
 }
