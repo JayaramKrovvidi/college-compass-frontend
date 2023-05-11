@@ -112,7 +112,7 @@ export class UsaMapComponent implements OnChanges {
 
         const tooltip = this.svg.append('g')
           .attr('class', 'tooltip')
-          .attr('transform', `translate(${this.projection([d.longitude, d.latitude])![0] + radiusScale(d.population) - 100}, 
+          .attr('transform', `translate(${this.projection([d.longitude, d.latitude])![0] + radiusScale(d.population) - d.name.length*5}, 
         ${this.projection([d.longitude, d.latitude])![1] - radiusScale(d.population) - 10})`);
 
         const text = tooltip.append('text')

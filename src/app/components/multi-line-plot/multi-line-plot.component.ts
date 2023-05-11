@@ -18,7 +18,7 @@ export class MultiLinePlotComponent implements OnInit, OnChanges {
     this.backend = backend;
   }
 
-  margin = { top: 5, right: 20, bottom: 40, left: 80 };
+  margin = { top: 20, right: 30, bottom: 40, left: 80 };
   width: number; height: number;
   graphWidth: number; graphHeight: number;
 
@@ -146,7 +146,7 @@ export class MultiLinePlotComponent implements OnInit, OnChanges {
           return d3.interpolate(`0,${length}`, `${length},${length}`);
         });
 
-      chart.selectAll(`.circle-${key}`)
+      const lineCircles = chart.selectAll(`.circle-${key}`)
         .data(data[key])
         .enter()
         .append("circle")
@@ -155,8 +155,39 @@ export class MultiLinePlotComponent implements OnInit, OnChanges {
         .attr("cy", (d: any) => yScale(d.cost))
         .attr("r", 4)
         .style("fill", (d: any) => colorScale(this.labels[idx]))
-        .append("title")
-        .text((d: any) => `Year: ${d.year}, Cost: ${d.cost}`);
+
+
+      lineCircles.on("mouseover", (event, d) => {
+        d3.select(event.currentTarget).style('cursor', 'pointer')
+        const txt = `Year: ${d.year}, Average Cost: ${d.cost}`;
+        const tooltip = chart.append('g')
+          .attr('class', 'tooltip')
+          .attr('transform', `translate(${(xScale(d.year) + xScale.bandwidth() / 2) - txt.length*5}, ${yScale(d.cost) - 15})`);
+
+        const text = tooltip.append('text')
+          .text(txt)
+          .attr('fill', '#374787')
+          .attr('font-size', '1rem')
+          .attr('font-weight', '600');
+
+        const bbox = text.node()?.getBBox();
+
+        tooltip.insert('rect', 'text')
+          .attr('fill', '#F9F9F9')
+          .attr('stroke', '#374787')
+          .attr('stroke-width', '1px')
+          .attr('rx', '5px')
+          .attr('ry', '5px')
+          .attr('width', bbox?.width ? bbox.width + 10 : 0)
+          .attr('height', bbox?.height ? bbox.height + 10 : 0)
+          .attr('x', bbox?.x ? bbox.x - 5 : 0)
+          .attr('y', bbox?.y ? bbox.y - 5 : 0);
+
+
+      }).on("mouseout", (event, d) => {
+        this.svg.select('g.tooltip').remove()
+        d3.select(event.currentTarget).style('cursor', 'default')
+      })
     })
 
   }
@@ -164,7 +195,7 @@ export class MultiLinePlotComponent implements OnInit, OnChanges {
   getMapContainerWidthAndHeight = (): { width: number; height: number } => {
     const lineContainer = this.el.nativeElement.querySelector('#multi-line-plot') as HTMLDivElement;
     const width = lineContainer.clientWidth - 50;
-    const height = (width / 960) * 550;
+    const height = (width / 960) * 600;
     return { width, height };
   };
 }
