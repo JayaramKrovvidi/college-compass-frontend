@@ -33,25 +33,22 @@ export class UsaMapComponent implements OnInit {
       .attr('width', width)
       .attr('height', height)
       .append("g")
-      // .style('pointer-events', 'auto !important')
-      .style('background-color', '#D6D3E3')
 
     const projection = d3.geoAlbersUsa().scale(width).translate([width / 2, height / 2.2]);
     const path = d3.geoPath().projection(projection);
 
-    this.renderMap(path, projection);
-    this.addBrushing(width, height, projection);
+    this.renderMap(path, projection, width, height);
   }
 
   getMapContainerWidthAndHeight = (): { width: number; height: number } => {
     const mapContainerEl = this.el.nativeElement.querySelector('#map') as HTMLDivElement;
     const width = mapContainerEl.clientWidth;
-    const height = (width / 960) * 600;
+    const height = (width / 960) * 500;
     return { width, height };
   };
 
 
-  private renderMap(path: d3.GeoPath<any, d3.GeoPermissibleObjects>, projection: any) {
+  private renderMap(path: d3.GeoPath<any, d3.GeoPermissibleObjects>, projection: any, width: any, height: any) {
     d3.json('https://unpkg.com/us-atlas@3.0.0/states-10m.json').then((usa: any) => {
 
       this.svg.selectAll('path')
@@ -91,8 +88,10 @@ export class UsaMapComponent implements OnInit {
           .style('fill', '#8365a3')
           .style("opacity", 0.2)
           .attr('r', (d: any) => projection([d.longitude, d.latitude]) && d.population ? radiusScale(d.population) : 0)
-          .append('title')
-          .text((d) => `${d.name}, Population: ${d.population}`)
+        // .append('title')
+        // .text((d) => `${d.name}, Population: ${d.population}`)
+
+        this.addBrushing(width, height, projection);
       })
     });
   }
