@@ -43,56 +43,617 @@ export class SunburstPlotComponent implements OnInit {
 
   getMockData() {
     return {
-      label: 'root',
+      label: 'year',
       children: [
         {
-          label: 'child 1',
+          label: '2017',
           children: [
             {
-              label: 'child 1-1',
-              size: 10
-            },
-            {
-              label: 'child 1-2',
+              label: 'American Indian / Alaskan Native',
               children: [
                 {
-                  label: 'child 1-2-1',
-                  size: 5
+                  label: 'men',
+                  size: 10
                 },
                 {
-                  label: 'child 1-3-1',
-                  size: 8
+                  label: 'women',
+                  size: 10
                 }
               ]
             },
             {
-              label: 'child 1-3',
-              selected: true,
+              label: 'Asian',
               children: [
                 {
-                  label: 'child 1-3-1',
-                  children: [
-                    {
-                      label: 'child 1-3-1-1',
-                      size: 2
-                    },
-                    {
-                      label: 'child 1-3-1-2',
-                      size: 16
-                    }
-                  ]
+                  label: 'men',
+                  size: 10
                 },
                 {
-                  label: 'child 1-3-2',
-                  size: 8
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Black / African',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hispanic',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hawaiian Pacific',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'White',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Multiple Races',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Unknown',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Non Resident Alien',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
                 }
               ]
             }
           ]
         },
         {
-          label: 'child 2',
-          size: 25
+          label: '2018',
+          children: [
+            {
+              label: 'American Indian / Alaskan Native',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Asian',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Black / African',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hispanic',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hawaiian Pacific',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'White',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Multiple Races',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Unknown',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Non Resident Alien',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: '2019',
+          children: [
+            {
+              label: 'American Indian / Alaskan Native',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Asian',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Black / African',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hispanic',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hawaiian Pacific',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'White',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Multiple Races',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Unknown',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Non Resident Alien',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: '2020',
+          children: [
+            {
+              label: 'American Indian / Alaskan Native',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Asian',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Black / African',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hispanic',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hawaiian Pacific',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'White',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Multiple Races',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Unknown',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Non Resident Alien',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: '2021',
+          children: [
+            {
+              label: 'American Indian / Alaskan Native',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Asian',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Black / African',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hispanic',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Hawaiian Pacific',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'White',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Multiple Races',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Unknown',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            },
+            {
+              label: 'Non Resident Alien',
+              children: [
+                {
+                  label: 'men',
+                  size: 10
+                },
+                {
+                  label: 'women',
+                  size: 10
+                }
+              ]
+            }
+          ]
         }
       ]
     }
