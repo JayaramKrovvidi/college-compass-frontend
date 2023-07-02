@@ -1,1 +1,37 @@
-<p>college-dashboard works!</p>
+<div fxLayout="column">
+    <div fxLayout="row" class="mat-toolbar-center" fxLayoutAlign="center center" (click)="refresh()">
+        <img src="../assets/compass-white.png" alt="Your Image" style="width: 31px; height: 31px; cursor: pointer;">
+        <h3 style="cursor: pointer;">College Compass</h3>
+    </div>
+
+    <div fxFlex="100" fxLayout="column" style="background-color: #4e4e4e;
+    background-image: linear-gradient(43deg, #4e4e4e 0%, #868686 30%, #c8c8c8 66%, #d4d4d4 100%);
+    ">
+        <div fxLayout="row">
+            <mat-card fxFlex="50">
+                <mat-card-title fxLayoutAlign="center">Size Proportional Map of USA Colleges offering Graduate Courses
+                    (2021)</mat-card-title>
+                <usa-map [unit_ids]="map_unit_ids" (onBrush)="mapBrushed($event)"></usa-map>
+            </mat-card>
+            <mat-card fxFlex="50">
+                <mat-card-title fxLayoutAlign="center">Parallel Coordinates Plot for Average College Statistics
+                    (2017-2021)</mat-card-title>
+                <pcp-plot [unit_ids]="pcp_unit_ids" (onBrush)="pcpBrushed($event)"></pcp-plot>
+            </mat-card>
+        </div>
+        <div fxLayout="row">
+            <mat-card fxFlex="33">
+                <mat-card-title fxLayoutAlign="center">Average Tuition Pricing (2017-2021)</mat-card-title>
+                <multi-line-plot [unit_ids]="stats_unit_ids"></multi-line-plot>
+            </mat-card>
+            <mat-card fxFlex="33">
+                <mat-card-title fxLayoutAlign="center">Overall Ethnicity Split (2017-2021)</mat-card-title>
+                <sunburst-plot [unit_ids]="stats_unit_ids"></sunburst-plot>
+            </mat-card>
+            <mat-card fxFlex="34">
+                <mat-card-title fxLayoutAlign="center">Average Admission Statistics (2017 - 2021)</mat-card-title>
+                <stacked-bar-chart [unit_ids]="stats_unit_ids"></stacked-bar-chart>
+            </mat-card>
+        </div>
+    </div>
+</div>
