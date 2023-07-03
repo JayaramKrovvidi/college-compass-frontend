@@ -1,4 +1,4 @@
-# Frontend Submodule
+# College Compass Frontend Sub Module
 
 Welcome to the frontend submodule of the College Compass Visualization Dashboard! This submodule contains the user interface and client-side code for the College Compass web application. This README will guide you through the installation steps and explain how all the components connect together.
 
