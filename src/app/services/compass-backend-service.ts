@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment.prod';
+
 
 export interface LocationDataPoint {
   unit_id: number;
@@ -71,27 +73,27 @@ export class BackendService {
   }
 
   getMapData(unit_ids: number[]) {
-    return this.http.get<MapData>(this.prepareUrl('http://localhost:6969/map_data', unit_ids));
+    return this.http.get<MapData>(this.prepareUrl(`${environment.baseUrl}/map_data`, unit_ids));
   }
 
   getAllUnitIds() {
-    return this.http.get<number[]>('http://localhost:6969/all_unit_ids')
+    return this.http.get<number[]>(`${environment.baseUrl}/all_unit_ids`)
   }
 
   getPCPData(unit_ids: number[]) {
-    return this.http.get<PCPDataPoint[]>(this.prepareUrl('http://localhost:6969/pcp_data', unit_ids));
+    return this.http.get<PCPDataPoint[]>(this.prepareUrl(`${environment.baseUrl}/pcp_data`, unit_ids));
   }
 
   getSunBurstData(unit_ids: number[]) {
-    return this.http.get<any>(this.prepareUrl('http://localhost:6969/sunburst', unit_ids))
+    return this.http.get<any>(this.prepareUrl(`${environment.baseUrl}/sunburst`, unit_ids))
   }
 
   getStackedBarChartData(unit_ids: number[]) {
-    return this.http.get<BarChartData[]>(this.prepareUrl('http://localhost:6969/bar_chart_data', unit_ids))
+    return this.http.get<BarChartData[]>(this.prepareUrl(`${environment.baseUrl}/bar_chart_data`, unit_ids))
   }
 
   getTuitionData(unit_ids: number[]) {
-    return this.http.get<Tuition>(this.prepareUrl('http://localhost:6969/average_price_data', unit_ids));
+    return this.http.get<Tuition>(this.prepareUrl(`${environment.baseUrl}/average_price_data`, unit_ids));
   }
 
   generateMockPCPData = (): PCPDataPoint[] => {
