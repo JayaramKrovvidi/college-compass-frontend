@@ -22,6 +22,8 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 10. Open a web browser and enter the URL where the frontend submodule is deployed. You should now see the College Compass user interface.
 
+11. ng deploy directly to pages command: `ng deploy --base-href=https://jayaramkrovvidi.github.io/college-compass-frontend`
+
 ## Project Structure
 
 The frontend submodule follows a modular architecture to ensure maintainability and reusability. Here's an overview of the project structure:
@@ -39,7 +41,7 @@ The frontend submodule relies on the backend submodule to fetch data and perform
 
 1. Install and configure the backend submodule by following the instructions provided in its respective README.
 
-2. Update the `API_ENDPOINT` variable in the `src/config.js` file of the frontend submodule to match the URL of the backend API.
+2. Update the`baseUrl` property of the `environment` variable in the `src/environments/` files of the frontend submodule, depending on the current environment,to match the URL of the backend API.
 
 By correctly configuring the API endpoint, the frontend will be able to communicate with the backend and retrieve the necessary data for the College Compass application.
 
